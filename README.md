@@ -58,6 +58,7 @@ Nest is [MIT licensed](LICENSE).
  - npm i -g @nestjs/cli
  - nest new project-"NOME"
  - npx @nestjs/cli new "NOME"
+ - npm i --save class-validator class-transformer
 
 ###
   O Nest possui  decorators para capturar dados a partir de uma requisição, inclusive o @Body tem outros usos. Se precisarmos, por exemplo, capturar só uma parte de um objeto que foi enviado no body podemos passar o nome da chave desta parte do objeto e o Nest captura apenas este valor. Vejamos o objeto abaixo:
