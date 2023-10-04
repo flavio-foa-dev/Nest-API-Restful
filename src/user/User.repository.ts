@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
+import { IUser } from './interface/User.entity';
+
 @Injectable()
 export class UserRepository {
-  private users = [];
+  private users: IUser[] = [];
 
-  async save(user) {
+  async save(user: IUser) {
     this.users.push(user);
-
-    console.log('Saved user', this.users);
   }
 
   async getUsers() {
     return this.users;
+  }
+
+  async emailExist(email: string) {
+    const emailParse = email.trim();
+    const output = await this.users.find((user) => user.email === emailParse);
+    return output !== undefined;
   }
 }

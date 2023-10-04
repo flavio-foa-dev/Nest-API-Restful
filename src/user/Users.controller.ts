@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UserRepository } from './User.repository';
 import { SaveUserDTO } from './dto/SaveUser.dto';
+import * as crypto from 'crypto';
 
 @Controller('/api/users')
 export class UserController {
@@ -10,8 +11,15 @@ export class UserController {
   }
   @Post()
   async saveUser(@Body() user: SaveUserDTO) {
-    this.usuarioRepository.save(user);
-    return { user, message: 'User saved successfully' };
+    const userEntity = {
+      id: crypto.randomBytes(16).toString('hex'),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+    };
+    this.usuarioRepository.save(userEntity);
+    return { id: userEntity.id, message: 'User saved successfully' };
   }
 
   @Get()
