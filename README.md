@@ -60,6 +60,9 @@ Nest is [MIT licensed](LICENSE).
  - npx @nestjs/cli new "NOME"
  - npm i --save class-validator class-transformer
  - npm install class-validator class-transformer
+ - npm install @nestjs/typeorm typeorm
+ - npm install @nestjs/config
+ - npm install pg --save
 
 ```
 app.useGlobalPipes(
