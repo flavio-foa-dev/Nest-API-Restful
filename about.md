@@ -228,3 +228,19 @@ volumes:
 ### Conectando com o Banco de Dados  orm TypeORM  pg driver postgres
 
 - npm i --save typeorm @nestjs/typeorm pg
+
+### Agora dentro da pasta src vamos criar uma pasta /config/typeorm.config.ts:
+```
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+
+export const typeOrmConfig: TypeOrmModuleOptions = {
+  type: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  username: 'pguser',
+  password: 'pgpassword',
+  database: 'nestjs',
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
+  synchronize: true,
+};
+```
