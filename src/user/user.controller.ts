@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -13,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UUID, randomUUID } from 'crypto';
 import { UserEntity } from './entities/user.entity';
+import { UserStatus } from './enum/user.status';
 
 @Controller('api/users')
 export class UserController {
@@ -30,7 +30,7 @@ export class UserController {
     user.confirmationToken = 'tt';
     user.recoverToken = 'ggg';
     user.role = 'user';
-    user.status = true;
+    user.status = UserStatus.ACTIVE;
 
     const response = await this.userService.create(user);
     return { message: 'user created', response };

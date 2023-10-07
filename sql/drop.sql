@@ -1,0 +1,2 @@
+-- Active: 1681314894576@@127.0.0.1@5432
+DROP TABLE public.users CASCADE;

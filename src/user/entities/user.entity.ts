@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserStatus } from '../enum/user.status';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -19,16 +20,31 @@ export class UserEntity {
   email: string;
   @Column({ name: 'password', length: 255, nullable: false })
   password: string;
-  @Column({ nullable: false })
+  @Column({ name: 'salt', length: 255, nullable: false })
   salt: string;
-  @Column({ nullable: true, type: 'varchar', length: 64 })
+  @Column({
+    name: 'confirmation_token',
+    nullable: true,
+    type: 'varchar',
+    length: 64,
+  })
   confirmationToken: string;
-  @Column({ nullable: true, type: 'varchar', length: 64 })
+  @Column({
+    name: 'recover_token',
+    nullable: true,
+    type: 'varchar',
+    length: 64,
+  })
   recoverToken: string;
-  @Column({ nullable: false, type: 'varchar', length: 20 })
+  @Column({
+    name: 'role',
+    nullable: false,
+    type: 'varchar',
+    length: 20,
+  })
   role: string;
-  @Column({ nullable: false, default: true })
-  status: boolean;
+  @Column({ name: 'status', enum: UserStatus, nullable: false, default: true })
+  status: UserStatus;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' })
