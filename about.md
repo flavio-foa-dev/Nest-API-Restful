@@ -63,9 +63,11 @@ Nest is [MIT licensed](LICENSE).
  - pm instal dotenv
  - typeorm-ts-node-esm -d src/db/dataSource.cli.ts migration:show
  - migration:generate caminho-da-migracao/adiciona-coluna-genero-em-filmes
+ - npm i --save bcrypt
  migration:run.
  npm install -g @nestjs/cli
  nest generate resource <entity>
+ npm i -g typeorm
 
 ```
 app.useGlobalPipes(

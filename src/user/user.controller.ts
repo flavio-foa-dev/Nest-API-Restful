@@ -10,9 +10,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UUID, randomUUID } from 'crypto';
+import { UUID, randomBytes, randomUUID } from 'crypto';
 import { UserEntity } from './entities/user.entity';
 import { UserStatus } from './enum/user.status';
+import { UserRole } from './enum/user.role';
+import * as bcrypt from 'bcrypt';
 
 @Controller('api/users')
 export class UserController {
@@ -25,11 +27,11 @@ export class UserController {
     user.firstName = createUserDto.firstName;
     user.lastName = createUserDto.lastName;
     user.email = createUserDto.email;
-    user.password = createUserDto.password;
-    user.salt = '123';
-    user.confirmationToken = 'tt';
-    user.recoverToken = 'ggg';
-    user.role = 'user';
+    user.salt = await bcrypt.genSalt();
+    user.confirmationToken = randomBytes(32).toString('hex');
+    user.password = await this.hashPassword(createUserDto.password, user.salt);
+    user.recoverToken = null;
+    user.role = UserRole.USER;
     user.status = UserStatus.ACTIVE;
 
     const response = await this.userService.create(user);
@@ -56,5 +58,9 @@ export class UserController {
   @Delete('/:id')
   async remove(@Param('id') id: UUID) {
     return this.userService.remove(id);
+  }
+
+  private async hashPassword(password: string, salt: string): Promise<string> {
+    return bcrypt.hash(password, salt);
   }
 }
