@@ -1,10 +1,9 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UUID } from 'crypto';
-import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -13,7 +12,9 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
   async create(userEntity: UserEntity) {
-    await this.userRepository.save(userEntity);
+    const newUser = this.userRepository.create(userEntity);
+    console.log(newUser, 'testando____create');
+    await this.userRepository.save(newUser);
   }
 
   async findAll() {
