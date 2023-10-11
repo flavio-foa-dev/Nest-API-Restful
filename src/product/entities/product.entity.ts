@@ -3,13 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductEmageEntity } from './product-image.entity';
-import { ProducCategoryEntity } from './product-category.entity';
-import { ProducCharacteristicEntity } from './ptoduct-characteristics.entity';
+import { ProductEmageEntity } from './image.entity';
+import { ProducCategoryEntity } from './category.entity';
+import { ProducCharacteristicEntity } from './characteristics.entity';
 
 @Entity({ name: 'products' })
 export class ProductEntity {
@@ -50,9 +52,10 @@ export class ProductEntity {
   )
   characteristics: ProducCharacteristicEntity[];
 
-  @OneToMany(() => ProducCategoryEntity, (category) => category.product, {
-    cascade: true,
+  @ManyToMany(() => ProducCategoryEntity, (category) => category.product, {
     eager: true,
+    cascade: true,
   })
+  @JoinTable()
   category: ProducCategoryEntity[];
 }

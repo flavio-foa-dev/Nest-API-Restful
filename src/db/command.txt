@@ -1,0 +1,4 @@
+npm run migration:generate src/db/migrations/nomedamigration
+npm run migration:run
+
+Nesse exemplo, você não adicionou propriedades específicas ao relacionamento entre as tabelas Product e Category. As tabelas intermediárias são criadas automaticamente pelo TypeORM. Esta configuração é apropriada se você só precisa estabelecer a relação de muitos para muitos entre as tabelas, sem propriedades adicionais associadas a essa relação.
