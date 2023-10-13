@@ -11,5 +11,4 @@ export class CreateUserDto {
   email: string;
   @MinLength(8)
   password: string;
-  passwordConfirmation: string;
 }

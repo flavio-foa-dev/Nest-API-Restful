@@ -10,7 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UUID, randomBytes, randomUUID } from 'crypto';
+import { UUID, randomBytes } from 'crypto';
 import { UserEntity } from './entities/user.entity';
 import { UserStatus } from './enum/user.status';
 import { UserRole } from './enum/user.role';
@@ -23,7 +23,6 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = new UserEntity();
-    user.id = randomUUID();
     user.firstName = createUserDto.firstName;
     user.lastName = createUserDto.lastName;
     user.email = createUserDto.email;
