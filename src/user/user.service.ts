@@ -13,7 +13,7 @@ export class UserService {
   ) {}
   async create(userEntity: UserEntity) {
     const newUser = this.userRepository.create(userEntity);
-    console.log(newUser, 'testando____create');
+
     await this.userRepository.save(newUser);
   }
 

@@ -3,13 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderStatus } from '../enum/orderStatus';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('orders')
-export class OrderEntenty {
+export class OrderEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,4 +27,7 @@ export class OrderEntenty {
   updadedAt: Date;
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
+
+  @ManyToOne(() => UserEntity, (user) => user.order)
+  user: UserEntity;
 }
