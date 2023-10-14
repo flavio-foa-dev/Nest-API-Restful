@@ -314,3 +314,7 @@ export class User extends BaseEntity {
   updatedAt: Date;
 }
 ```
+
+O controller é responsável por lidar com as requisições HTTP relacionadas ao recurso. Ele contém os métodos para criar, ler, atualizar e deletar os objetos do recurso. O Service é responsável pela lógica de negócio relacionada ao recurso, enquanto a Entity representa a estrutura de dados do recurso, se estiver usando um banco de dados.
+
+Caso a CLI do Nest.js não atualize automaticamente o arquivo app.module.ts para importar o controlador e o serviço do recurso que você criou, é necessário importá-lo manualmente. Isso garante que o Nest.js reconheça e gerencie corretamente o novo recurso em sua aplicação.
