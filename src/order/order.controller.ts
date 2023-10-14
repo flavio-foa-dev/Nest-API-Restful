@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { UUID } from 'crypto';
 
-@Controller('order')
+@Controller('api/orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  @Post('/:userId')
+  create(
+    @Body() createOrderDto: CreateOrderDto,
+    @Param('userId') userId: UUID,
+  ) {
+    return this.orderService.create(createOrderDto, userId);
   }
 
   @Get()

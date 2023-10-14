@@ -16,7 +16,7 @@ export class OrderService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(userId: string) {
+  async create(createDto: CreateOrderDto, userId: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
     const orderEntity = new OrderEntity();
     orderEntity.total = 10;
