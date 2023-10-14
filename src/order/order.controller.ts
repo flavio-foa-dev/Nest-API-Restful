@@ -6,9 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { UUID } from 'crypto';
 
@@ -16,12 +16,9 @@ import { UUID } from 'crypto';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post('/:userId')
-  create(
-    @Body() createOrderDto: CreateOrderDto,
-    @Param('userId') userId: UUID,
-  ) {
-    return this.orderService.create(createOrderDto, userId);
+  @Post()
+  create(@Query('userId') userId: UUID) {
+    return this.orderService.create(userId);
   }
 
   @Get()
@@ -29,9 +26,9 @@ export class OrderController {
     return this.orderService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+  @Get('/search')
+  findOne(@Query('userId') userId: UUID) {
+    return this.orderService.findOne(userId);
   }
 
   @Patch(':id')
