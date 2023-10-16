@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
@@ -18,6 +17,7 @@ export class OrderService {
 
   async create(userId: UUID) {
     const user = await this.userRepository.findOneBy({ id: userId });
+
     const orderEntity = new OrderEntity();
     orderEntity.total = 10;
     orderEntity.status = OrderStatus.PROCESSING;
@@ -40,13 +40,5 @@ export class OrderService {
       },
     });
     return order;
-  }
-
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} order`;
   }
 }
