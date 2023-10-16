@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProductImageEntity } from './product-image.entity';
+import { OrderItemEntity } from '../../order/entities/order-item.entity';
 
 @Entity({ name: 'products' })
 export class ProductEntity {
@@ -36,4 +37,7 @@ export class ProductEntity {
     eager: true,
   })
   images: ProductImageEntity[];
+
+  @OneToMany(() => OrderItemEntity, (item) => item.product)
+  OrderItems: OrderItemEntity[];
 }
