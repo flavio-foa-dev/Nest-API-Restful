@@ -3,13 +3,13 @@ import {
   ArrayMinSize,
   IsArray,
   IsInt,
-  IsUUID,
+  //IsUUID,
   ValidateNested,
 } from 'class-validator';
 
 class orderItemDTO {
-  @IsUUID()
-  productId: string;
+  // @IsUUID()
+  // productId: string;
   @IsInt()
   quantity: number;
 }

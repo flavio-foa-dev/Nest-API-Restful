@@ -6,6 +6,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import { OrderStatus } from './enum/orderStatus';
 import { UUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderItemEntity } from './entities/order-item.entity';
 
 @Injectable()
 export class OrderService {
@@ -19,10 +20,22 @@ export class OrderService {
   async create(userId: UUID, data: CreateOrderDto) {
     const user = await this.userRepository.findOneBy({ id: userId });
 
-    const orderEntity = new OrderEntity();
+    const itemsOrderEntity = data.orderItems.map((item) => {
+      const itemOrderEntity = new OrderItemEntity();
+      itemOrderEntity.price = 10;
+      itemOrderEntity.quantity = item.quantity;
+      return itemOrderEntity;
+    });
 
+    const totalPrice = itemsOrderEntity.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
+
+    const orderEntity = new OrderEntity();
     orderEntity.status = OrderStatus.PROCESSING;
     orderEntity.user = user;
+    orderEntity.orderItem = itemsOrderEntity;
+    orderEntity.total = totalPrice;
 
     const creteOrder = await this.orderRepository.save(orderEntity);
     return creteOrder;
