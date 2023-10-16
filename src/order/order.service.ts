@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { OrderStatus } from './enum/orderStatus';
 import { UUID } from 'crypto';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -15,11 +16,11 @@ export class OrderService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(userId: UUID) {
+  async create(userId: UUID, data: CreateOrderDto) {
     const user = await this.userRepository.findOneBy({ id: userId });
 
     const orderEntity = new OrderEntity();
-    orderEntity.total = 10;
+
     orderEntity.status = OrderStatus.PROCESSING;
     orderEntity.user = user;
 
