@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { In, Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { UUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItemEntity } from './entities/order-item.entity';
 import { ProductEntity } from '../product/entities/product.entity';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -22,6 +23,9 @@ export class OrderService {
 
   async create(userId: UUID, data: CreateOrderDto) {
     const user = await this.userRepository.findOneBy({ id: userId });
+    if (user === null) {
+      throw new NotFoundException(`user not found #${userId}`);
+    }
     const productsIds = data.orderItems.map((item) => item.productId);
 
     const productsRelations = await this.productRepository.findBy({
@@ -32,6 +36,11 @@ export class OrderService {
       const product = productsRelations.find(
         (product) => product.id === item.productId,
       );
+
+      if (product === undefined) {
+        throw new NotFoundException(`product not found id:${item.productId}`);
+      }
+
       const itemOrderEntity = new OrderItemEntity();
       itemOrderEntity.product = product;
       itemOrderEntity.price = product.price;
@@ -68,5 +77,15 @@ export class OrderService {
       },
     });
     return order;
+  }
+
+  async update(id: string, updateOrderDto: UpdateOrderDto) {
+    const order = await this.productRepository.findOneBy({ id });
+    if (order === null) {
+      throw new NotFoundException(`order not found #${id}`);
+    }
+    Object.assign(order, updateOrderDto);
+
+    await this.productRepository.save(order);
   }
 }
