@@ -53,7 +53,7 @@ export class OrderService {
       const product = productsRelations.find(
         (product) => product.id === item.productId,
       );
-      console.log('olaaaa', product);
+
       if (product === undefined) {
         throw new NotFoundException(`product not found id:${item.productId}`);
       }
