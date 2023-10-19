@@ -11,4 +11,5 @@ export class CreateUserDto {
   email: string;
   @MinLength(8)
   password: string;
+  recoverToken?: string | null;
 }

@@ -29,7 +29,7 @@ export class UserController {
     user.salt = await bcrypt.genSalt();
     user.confirmationToken = randomBytes(32).toString('hex');
     user.password = await this.hashPassword(createUserDto.password, user.salt);
-    user.recoverToken = null;
+    user.recoverToken = randomBytes(32).toString('hex');
     user.role = UserRole.USER;
     user.status = UserStatus.ACTIVE;
 
