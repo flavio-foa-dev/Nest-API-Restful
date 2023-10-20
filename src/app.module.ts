@@ -9,14 +9,16 @@ import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { APP_FILTER } from '@nestjs/core';
 import { FilterExceptionHTTP } from './error/filter-exception';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,
-    // ProductModule,
+
     OrderModule,
     ProductModule,
+    CacheModule.register({ isGlobal: true, ttl: 10000 }),
   ],
   controllers: [AppController],
   providers: [

@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UUID } from 'crypto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
-@Controller('/api/product')
+@Controller('/api/products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -25,9 +28,12 @@ export class ProductController {
     return this.productService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  @Get('/:id')
+  @UseInterceptors(CacheInterceptor) // usando sistema de cache do nest, busca de um produto
+  findOne(@Param('id') id: UUID) {
+    const product = this.productService.findOne(id);
+    console.log('Buscando produco, sistema de cache');
+    return product;
   }
 
   @Patch(':id')
@@ -36,7 +42,7 @@ export class ProductController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: UUID) {
     return this.productService.remove(id);
   }
 }

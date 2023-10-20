@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductImageEntity } from './entities/product-image.entity';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ProductService {
@@ -16,10 +17,7 @@ export class ProductService {
   ) {}
   async create(createProductDto: CreateProductDto) {
     const productEntity = new ProductEntity();
-    productEntity.name = createProductDto.name;
-    productEntity.price = createProductDto.price;
-    productEntity.stock = createProductDto.stock;
-    productEntity.description = createProductDto.description;
+    Object.assign(productEntity, <ProductEntity>createProductDto);
 
     const creteProduct = await this.productRepository.save(productEntity);
 
@@ -36,12 +34,12 @@ export class ProductService {
     return response;
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll() {
+    return this.productRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: UUID) {
+    return this.productRepository.findOneBy({ id });
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
@@ -49,12 +47,12 @@ export class ProductService {
     if (product === null) {
       throw new NotFoundException(`product not found #${id}`);
     }
-    Object.assign(product, updateProductDto);
+    Object.assign(product, updateProductDto as ProductEntity);
 
     await this.productRepository.save(product);
   }
 
-  async remove(id: string) {
+  async remove(id: UUID) {
     await this.productRepository.delete(id);
   }
 }
