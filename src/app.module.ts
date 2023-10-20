@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module';
 import { APP_FILTER } from '@nestjs/core';
 import { FilterExceptionHTTP } from './error/filter-exception';
 import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
@@ -18,7 +19,13 @@ import { CacheModule } from '@nestjs/cache-manager';
 
     OrderModule,
     ProductModule,
-    CacheModule.register({ isGlobal: true, ttl: 10000 }),
+    // CacheModule.register({ isGlobal: true, ttl: 10000 }),
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        store: await redisStore({ ttl: 10 * 1000 }),
+      }),
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [
