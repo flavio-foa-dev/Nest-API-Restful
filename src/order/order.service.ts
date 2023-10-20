@@ -102,13 +102,12 @@ export class OrderService {
     return order;
   }
 
-  async update(id: string, updateOrderDto: UpdateOrderDto) {
-    const order = await this.productRepository.findOneBy({ id });
+  async update(orderId: UUID, updateOrderDto: UpdateOrderDto) {
+    const order = await this.orderRepository.findOneBy({ id: orderId });
     if (order === null) {
-      throw new NotFoundException(`order not found #${id}`);
+      throw new NotFoundException(`order not found #${orderId}`);
     }
     Object.assign(order, updateOrderDto);
-
-    await this.productRepository.save(order);
+    return await this.orderRepository.save(order);
   }
 }

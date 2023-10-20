@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 
 import { UUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('api/orders')
 export class OrderController {
@@ -21,5 +30,13 @@ export class OrderController {
   @Get('/search')
   findOne(@Query('userId') userId: UUID) {
     return this.orderService.findOne(userId);
+  }
+
+  @Patch('/:id')
+  async update(
+    @Param('id') orderId: UUID,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    return this.orderService.update(orderId, updateOrderDto);
   }
 }
