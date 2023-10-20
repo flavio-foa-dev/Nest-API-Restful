@@ -64,10 +64,86 @@ Nest is [MIT licensed](LICENSE).
  - typeorm-ts-node-esm -d src/db/dataSource.cli.ts migration:show
  - migration:generate caminho-da-migracao/adiciona-coluna-genero-em-filmes
  - npm i --save bcrypt
+ - cache-manager-redis-yet
  migration:run.
  npm install -g @nestjs/cli
  nest generate resource <entity>
  npm i -g typeorm
+
+- app.module, no array de imports:
+```
+     CacheModule.registerAsync({
+      useFactory: async () => ({
+        store: await redisStore({ ttl: 10 * 1000 }),
+      }),
+      isGlobal: true,
+    }),
+
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: PostgresConfigService,
+      inject: [PostgresConfigService],
+    }),
+```
+ Note que essa não é a forma convencional de importar módulos. Em vez disso, estamos utilizando métodos estáticos como registerAsync, forRoot e forRootAsync, além de passar configurações para esses métodos.
+
+### Module
+Ao realizar a integração com o Redis, utilizamos algumas sintaxes específicas do Nest. Mas como isso funciona “por baixo dos panos”?
+
+Vamos relembrar o código que inserimos em app.module, no array de imports:
+
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        store: await redisStore({ ttl: 10 * 1000 }),
+      }),
+      isGlobal: true,
+    }),
+COPIAR CÓDIGO
+Além disso, nesse mesmo array imports, também temos mais alguns módulos com as seguintes sintaxes:
+
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: PostgresConfigService,
+      inject: [PostgresConfigService],
+    }),
+COPIAR CÓDIGO
+Note que essa não é a forma convencional de importar módulos. Em vez disso, estamos utilizando métodos estáticos como registerAsync, forRoot e forRootAsync, além de passar configurações para esses métodos. Vamos entender melhor essa sintaxe?
+
+Módulos estáticos e dinâmicos
+Um módulo no Nest nada mais é que uma classe com o decorator @Module. Podemos chamar os módulos “normais” que conhecemos como módulos estáticos, como o UsuarioModule e o ProdutoModule. Para que um outro módulo possa importá-los, basta adicioná-los no array imports do decorator @Module, como fizemos em AppModule.
+
+Contudo, o que está acontecendo quando adicionamos uma importação como CacheModule.registerAsync({ ...opções })? Por baixo dos panos, CacheModule é um módulo muito semelhante aos módulos estáticos que conhecemos, mas podemos notar que ele possui um método estático registerAsync. Nesta aula, também chegamos a utilizar um método register, também disponível nesse módulo, antes de fazermos a integração com o Redis.
+
+No VSCode, se você passar o cursor por cima de qualquer um dos métodos registerAsync, forRoot ou forRootAsync, poderá notar que todos eles retornam uma classe chamada DynamicModule. Em outras palavras, os módulos que aplicam esses métodos podem ser chamados de módulos dinâmicos.
+
+Qual a diferença entre um módulo estático e um módulo dinâmico?
+Em um módulo dinâmico, podemos passar configurações específicas no momento de importá-lo. Por exemplo, no método registerAsync do CacheModule, passamos configurações como a store a ser utilizada e o TTL padrão dos dados que serão guardados em cache.
+
+Ao fazer isso, os serviços internos do módulo dinâmico poderão utilizar essas informações que passamos. A principal vantagem é que não precisamos repetidamente definir essas informações sempre que formos utilizar os serviços de um módulo dinâmico, como o CacheModule.
+
+Se CacheModule não fosse um módulo dinâmico, não conseguiríamos migrar tão facilmente o cache nativo do Nest para o Redis. Note que, quando fizemos essa migração, alteramos somente as configurações de importação do módulo dinâmico e não foi necessário alterar nada do código do controlador de produtos.
+
+Isso porque o CacheModule possui justamente o papel de abstrair o mecanismo de cache sendo utilizado na aplicação, facilitando seu uso em outros módulos. Assim, sempre que precisarmos alterar a ferramenta de cache ou configurações específicas, como o TTL padrão, precisamos modificar apenas as configurações na importação dinâmica do CacheModule.
+
+Em produto.controller, por exemplo, utilizamos o CacheInterceptor. Esse interceptor, por sua vez, utiliza os serviços de CacheModule por baixo dos panos, mais especificamente o serviço gerenciador de cache. No desafio Otimizando a listagem de um produto, em vez de utilizar o interceptor, utilizamos diretamente o gerenciador, o injetando no construtor do controlador de produtos, com o seguinte código:
+
+@Inject(CACHE_MANAGER) private gerenciadorDeCache: Cache,
+COPIAR CÓDIGO
+O token CACHE_MANAGER faz referência ao gerenciador de cache (um dos serviços disponibilizados por CacheModule), e com esse código estamos pedindo para o Nest injetar esse serviço no controlador. Como o CacheModule foi configurado dinamicamente nas importações de ProdutoModule, o serviço já virá com informações definidas por padrão, como a store do Redis e o TTL padrão!
+
+Além disso, você terá a oportunidade de explorar melhor essa sintaxe de injeção em uma atividade futura, quando falarmos sobre provedores personalizados :)
+
+Também podemos definir informações diferentes dependendo de onde vamos importar o módulo dinâmico. Diferentes módulos que importarem o CacheModule poderão definir um TTL padrão diferente ou até mesmo uma store diferente. É exatamente por isso que eles são chamados de módulos dinâmicos: eles podem ser configurados dinamicamente no momento da importação, passando informações específicas para uso interno nos seus serviços.
+
+Esses são apenas alguns exemplos do grande poder dos módulos dinâmicos do Nest. Você pode ler em mais detalhes sobre como eles funcionam na página Dynamic Modules da documentação, incluindo como você pode construir um do zero.
+
+Além disso, você pode consultar a seção Community guidelines para entender um pouco mais sobre a diferença entre os métodos register, forRoot e forFeature, além de suas contrapartes registerAsync, forRootAsync e forFeatureAsync. No geral, esses métodos possuem o mesmo propósito de construir o módulo dinamicamente, mas existem convenções para utilizá-los em diferentes situações.
+
+
 
 ```
 app.useGlobalPipes(
