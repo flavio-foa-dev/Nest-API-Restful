@@ -15,13 +15,17 @@ import { UserEntity } from './entities/user.entity';
 import { UserStatus } from './enum/user.status';
 import { UserRole } from './enum/user.role';
 import * as bcrypt from 'bcrypt';
+import { HashPasswordPipe } from './helper/hash-pass.pipe';
 
 @Controller('api/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Body('password', HashPasswordPipe) password: string,
+  ) {
     const user = new UserEntity();
     user.firstName = createUserDto.firstName;
     user.lastName = createUserDto.lastName;

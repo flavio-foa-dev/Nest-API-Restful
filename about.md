@@ -394,3 +394,83 @@ export class User extends BaseEntity {
 O controller é responsável por lidar com as requisições HTTP relacionadas ao recurso. Ele contém os métodos para criar, ler, atualizar e deletar os objetos do recurso. O Service é responsável pela lógica de negócio relacionada ao recurso, enquanto a Entity representa a estrutura de dados do recurso, se estiver usando um banco de dados.
 
 Caso a CLI do Nest.js não atualize automaticamente o arquivo app.module.ts para importar o controlador e o serviço do recurso que você criou, é necessário importá-lo manualmente. Isso garante que o Nest.js reconheça e gerencie corretamente o novo recurso em sua aplicação.
+
+
+### Regex Para Password
+
+Para garantir a segurança das contas dos usuários e proteger o sistema contra ataques de força bruta, você deve implementar uma validação mais rigorosa para as senhas dos usuários. Neste desafio, você deve utilizar o conceito de expressões regulares e o @Matches decorator para garantir que as senhas atendam a critérios específicos.
+
+Atualmente, o DTO de criação de usuário possui a seguinte estrutura:
+```
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { EmailEhUnico } from '../validacao/email-eh-unico.validator';
+
+export class CriaUsuarioDTO {
+  @IsNotEmpty({ message: 'O nome não pode ser vazio' })
+  nome: string;
+
+  @IsEmail(undefined, { message: 'O e-mail informado é inválido' })
+  @EmailEhUnico({ message: 'Já existe um usuário com este e-mail' })
+  email: string;
+
+  @MinLength(6, { message: 'A senha precisa ter pelo menos 6 caracteres' })
+  senha: string;
+}
+
+```
+
+E os critérios a serem cumpridos, visando maior segurança, são:
+
+1 - Adicione o @Matches decorator do pacote class-validator na propriedade senha do DTO de criação de usuário;
+
+2 - Defina uma expressão regular que atenda aos seguintes requisitos para as senhas:
+
+Pelo menos uma letra minúscula (a-z);
+Pelo menos uma letra maiúscula (A-Z);
+Pelo menos um dígito (0-9);
+Pelo menos um caractere especial (por exemplo, !@#$%^&*()_-+=<>?/).
+3 - Garanta que a senha tenha um comprimento mínimo de 8 caracteres e um comprimento máximo de 30 caracteres;
+
+4 - Quando a senha não atender aos critérios acima, o @Matches decorator deve lançar uma mensagem de erro personalizada, por exemplo: 'A senha deve conter pelo menos uma letra minúscula, uma letra maiúscula, um dígito, um caractere especial e ter entre 8 e 30 caracteres'.
+
+Seguindo essas orientações, implemente uma validação para as senhas dos usuários!
+
+O decorator @Matches é uma funcionalidade oferecida pelo módulo de validação do Nest.js, que permite aplicar validações baseadas em expressões regulares para campos específicos em DTOs (Data Transfer Objects).
+
+O @Matches aceita dois parâmetros:
+
+Expressão Regular (Regex): É o primeiro parâmetro do @Matches, onde você deve fornecer a expressão regular que será utilizada para realizar a validação do campo. Ele verificará em nosso exemplo se a senha recebida atende o que digitamos na expressão regular, caso não atenda, será lançada uma mensagem de erro.
+
+Opções: É o segundo parâmetro do @Matches, que permite fornecer opções adicionais para a validação. Com esse parâmetro, nós podemos fornecer uma mensagem de erro personalizada caso a validação falhe. Em nosso desafio, devemos retornar a mensagem 'A senha deve conter pelo menos uma letra minúscula, uma letra maiúscula, um dígito, um caractere especial e ter entre 8 e 30 caracteres' caso falhe.
+
+Primeiro, vamos adicionar o @Matches decorator à propriedade senha do DTO de criação de usuário:
+```
+@Matches()
+senha: string;
+
+```
+Agora, o passo seguinte é construir a expressão regular que atenderá aos critérios estabelecidos para as senhas. A expressão regular deve ser elaborada para garantir a presença de pelo menos uma letra minúscula, uma letra maiúscula, um dígito e um caractere especial.
+
+Para isso, a expressão regular pode ser construída da seguinte forma:
+
+```
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W+).{6,30}$/
+
+```
+Agora, vamos explicar cada parte da expressão:
+
+^: Esse símbolo indica o início da string. Ou seja, a expressão regular vai verificar a partir do começo da senha.
+(?=.*[a-z]): Essa parte da expressão verifica se há pelo menos uma letra minúscula (a-z) em qualquer posição da senha.
+(?=.*[A-Z]): Aqui, verificamos se há pelo menos uma letra maiúscula (A-Z) em qualquer posição da senha.
+(?=.*\d): Essa parte confere se há pelo menos um dígito (0-9) em qualquer posição da senha.
+(?=.*\W+): Nesta parte, verificamos se há pelo menos um caractere especial (por exemplo, !@#$%^&*()_-+=<>?/) em qualquer posição da senha.
+.{6,30}: Essa parte verifica se a senha tem um comprimento mínimo de 6 caracteres e um comprimento máximo de 30 caracteres. O ponto final (.) corresponde a qualquer caractere (exceto quebras de linha), e o quantificador {6,30} específica que deve haver de 6 a 30 caracteres.
+$: Esse símbolo indica o final da string. A expressão regular vai garantir que o padrão se estenda até o final da senha.
+
+```
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W+)(.{6,30})$/, {
+    message: 'A senha deve conter pelo menos uma letra minúscula, uma letra maiúscula, um dígito, um caractere especial e ter entre 8 e 30 caracteres',
+  })
+  senha: string;
+
+```
