@@ -70,6 +70,7 @@ Nest is [MIT licensed](LICENSE).
  npm install -g @nestjs/cli
  nest generate resource <entity>
  npm i -g typeorm
+ nest generate guard `auth``
 
 - app.module, no array de imports:
 ```
@@ -474,4 +475,19 @@ $: Esse símbolo indica o final da string. A expressão regular vai garantir que
   })
   senha: string;
 
-```
+
+
+### Guards e casos de uso com Nest.js
+
+Autenticação:
+Podemos verificar credenciais, tokens, chaves ou outra forma de autenticação suportada. Nesse contexto, um Guard irá atuar de fato como um Guardião da rota, pois irá protegê-la através da verificação das regras de autenticação.
+Autorização:
+A lógica de autorização também pode ser aplicada por meio de um Guard. Após autenticar o usuário, um Guard pode verificar se ele carrega as permissões para realizar uma determinada operação ou acessar recursos da aplicação. Se o usuário não for autorizado a acessar uma rota de Administrador, por exemplo, um Guard pode negar o acesso e retornar um erro.
+Early exit (saída antecipada):
+Guards podem interromper o processamento de uma requisição antes de alcançar o controlador. Essa ação é muito útil quando alguma condição não é atendida e, seja por questões de segurança ou regras de negócio, não precisamos continuar com o processamento da requisição. Nesse sentido, é possível permitir que um Guard retorne uma resposta ao cliente de forma direta, evitando assim adicionar processamento no controlador.
+Validação de dados:
+Antes de uma requisição ser processada pelo controlador, Guards podem ser utilizados para validar os dados. Podemos incluir nesse contexto a verificação de parâmetros de URL, payloads, dados enviados no corpo da requisição, cabeçalhos, dentre outros. Caso os dados enviados não apresentarem os requisitos esperados, um Guard poderá rejeitar a requisição e enviar uma resposta de erro.
+Lógica de negócios:
+Guards também são flexíveis para se adaptarem a regras de negócios. É possível executar lógica de negócios específica para uma rota de acordo com a necessidade. Assim, cada rota pode conter requisitos de validação e segurança distintos.
+Logging e métricas:
+Podemos registrar informações relevantes sobre as requisições e respostas, a fim de capturar métricas ou para auxiliar no monitoramento e depuração da aplicação.
