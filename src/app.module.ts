@@ -12,11 +12,12 @@ import { FilterExceptionHTTP } from './error/filter-exception';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
+import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,
-
     OrderModule,
     ProductModule,
     // CacheModule.register({ isGlobal: true, ttl: 10000 }),
@@ -26,6 +27,7 @@ import { redisStore } from 'cache-manager-redis-yet';
       }),
       isGlobal: true,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
