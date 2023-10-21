@@ -65,6 +65,7 @@ Nest is [MIT licensed](LICENSE).
  - migration:generate caminho-da-migracao/adiciona-coluna-genero-em-filmes
  - npm i --save bcrypt
  - cache-manager-redis-yet
+ - npm i @nestjs/jwt
  migration:run.
  npm install -g @nestjs/cli
  nest generate resource <entity>
