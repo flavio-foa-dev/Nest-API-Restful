@@ -24,16 +24,18 @@ export class UserController {
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
-    @Body('password', HashPasswordPipe) password: string,
+    @Body('password', HashPasswordPipe)
+    password: { hashPassword: string; salt: string },
   ) {
+    const { hashPassword, salt } = password;
     const user = new UserEntity();
     user.firstName = createUserDto.firstName;
     user.lastName = createUserDto.lastName;
     user.email = createUserDto.email;
-    user.salt = await bcrypt.genSalt();
-    user.confirmationToken = randomBytes(32).toString('hex');
-    user.password = await this.hashPassword(createUserDto.password, user.salt);
-    user.recoverToken = randomBytes(32).toString('hex');
+    user.salt = salt;
+    user.confirmationToken = randomBytes(8).toString('hex');
+    user.password = hashPassword;
+    user.recoverToken = randomBytes(8).toString('hex');
     user.role = UserRole.USER;
     user.status = UserStatus.ACTIVE;
 
