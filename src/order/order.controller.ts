@@ -14,13 +14,12 @@ import { UUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-
+@UseGuards(AuthGuard)
 @Controller('api/orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   create(@Query('userId') userId: UUID, @Body() data: CreateOrderDto) {
     return this.orderService.create(userId, data);
   }

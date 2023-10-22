@@ -13,6 +13,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -20,6 +21,9 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     OrderModule,
     ProductModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     // CacheModule.register({ isGlobal: true, ttl: 10000 }),
     CacheModule.registerAsync({
       useFactory: async () => ({

@@ -3,6 +3,7 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { UserPayload } from 'src/types/user-payload.type';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     if (!userComparer) throw new UnauthorizedException();
     console.log('meaagem de password', { email, password, user });
 
-    const payload = {
+    const payload: UserPayload = {
       sub: user.id,
       email: user.email,
       role: user.role,
