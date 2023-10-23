@@ -38,7 +38,7 @@ export class OrderService {
     });
   }
 
-  async create(userId: UUID, data: CreateOrderDto) {
+  async create(userId: string, data: CreateOrderDto) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (user === null) {
       throw new NotFoundException(`user not found #${userId}`);

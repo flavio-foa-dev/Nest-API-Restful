@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
@@ -13,14 +14,15 @@ import { OrderService } from './order.service';
 import { UUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard, RequestUser } from 'src/auth/auth.guard';
 @UseGuards(AuthGuard)
 @Controller('api/orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  create(@Query('userId') userId: UUID, @Body() data: CreateOrderDto) {
+  create(@Req() req: RequestUser, @Body() data: CreateOrderDto) {
+    const userId = req.user.sub;
     return this.orderService.create(userId, data);
   }
 

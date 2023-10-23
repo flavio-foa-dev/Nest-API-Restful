@@ -17,7 +17,10 @@ export class ProductService {
   ) {}
   async create(createProductDto: CreateProductDto) {
     const productEntity = new ProductEntity();
-    Object.assign(productEntity, <ProductEntity>createProductDto);
+    productEntity.name = createProductDto.name;
+    productEntity.price = createProductDto.price;
+    productEntity.stock = createProductDto.stock;
+    productEntity.description = createProductDto.description;
 
     const creteProduct = await this.productRepository.save(productEntity);
 
@@ -29,9 +32,7 @@ export class ProductService {
       return image;
     });
 
-    const response = await this.productImageRepository.save(createImages);
-
-    return response;
+    return this.productImageRepository.save(createImages);
   }
 
   async findAll() {

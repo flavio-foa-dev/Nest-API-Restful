@@ -16,9 +16,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException();
 
     const userComparer = bcrypt.compareSync(password, user.password);
-    console.log('compare', userComparer);
     if (!userComparer) throw new UnauthorizedException();
-    console.log('meaagem de password', { email, password, user });
 
     const payload: UserPayload = {
       sub: user.id,

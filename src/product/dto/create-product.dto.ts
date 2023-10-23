@@ -2,6 +2,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsInt,
+  IsNotEmpty,
   IsNumber,
   IsString,
   IsUrl,
@@ -26,6 +27,7 @@ export class CreateProductDto {
   name: string;
 
   @IsNumber()
+  @IsNotEmpty()
   price: number;
 
   @IsInt()
