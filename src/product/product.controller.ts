@@ -30,9 +30,9 @@ export class ProductController {
 
   @Get('/:id')
   @UseInterceptors(CacheInterceptor) // usando sistema de cache do nest, busca de um produto
-  findOne(@Param('id') id: UUID) {
-    const product = this.productService.findOne(id);
-    console.log('Buscando produco, sistema de cache');
+  async findOne(@Param('id') id: UUID) {
+    const product = await this.productService.findOne(id);
+    console.log('Buscando produto, sistema de cache ativado');
     return product;
   }
 
