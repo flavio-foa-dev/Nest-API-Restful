@@ -5,13 +5,12 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-
-import { UUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard, RequestUser } from 'src/auth/auth.guard';
@@ -27,20 +26,25 @@ export class OrderController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Req() req: RequestUser) {
+    const role = req.user.role;
+    console.log('ADMIM SOMENTE, seu role:', role);
     return this.orderService.findAll();
   }
 
-  @Get('/search')
-  findOne(@Query('userId') userId: UUID) {
+  @Get('/myorders')
+  findOne(@Req() req: RequestUser) {
+    const userId = req.user.sub;
     return this.orderService.findOne(userId);
   }
 
-  @Patch('/:id')
+  @Put('/:id')
   async update(
-    @Param('id') orderId: UUID,
+    @Req() req: RequestUser,
+    @Param('id') orderId: string,
     @Body() updateOrderDto: UpdateOrderDto,
   ) {
-    return this.orderService.update(orderId, updateOrderDto);
+    const userId = req.user.sub;
+    return this.orderService.update(orderId, updateOrderDto, userId);
   }
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -93,7 +94,7 @@ export class OrderService {
     return orders;
   }
 
-  async findOne(userId: UUID) {
+  async findOne(userId: string) {
     const order = await this.orderRepository.find({
       where: { user: { id: userId } },
       relations: {
@@ -103,10 +104,22 @@ export class OrderService {
     return order;
   }
 
-  async update(orderId: UUID, updateOrderDto: UpdateOrderDto) {
-    const order = await this.orderRepository.findOneBy({ id: orderId });
+  async update(
+    orderId: string,
+    updateOrderDto: UpdateOrderDto,
+    userId: string,
+  ) {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: { user: true, orderItem: true },
+    });
     if (order === null) {
       throw new NotFoundException(`order not found #${orderId}`);
+    }
+    if (order.user.id !== userId) {
+      throw new ForbiddenException(
+        'You are not authorized to update this order',
+      );
     }
     Object.assign(order, updateOrderDto);
     return await this.orderRepository.save(order);

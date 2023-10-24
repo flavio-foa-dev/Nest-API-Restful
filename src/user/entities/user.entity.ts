@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { UserStatus } from '../enum/user.status';
 import { OrderEntity } from '../../order/entities/order.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -20,10 +21,14 @@ export class UserEntity {
   lastName: string;
   @Column({ name: 'email', length: 50, nullable: false })
   email: string;
+  @Exclude()
   @Column({ name: 'password', length: 255, nullable: false })
   password: string;
+  @Exclude()
   @Column({ name: 'salt', length: 255, nullable: false })
   salt: string;
+
+  @Exclude()
   @Column({
     name: 'confirmation_token',
     nullable: true,
@@ -31,6 +36,8 @@ export class UserEntity {
     length: 64,
   })
   confirmationToken: string;
+
+  @Exclude()
   @Column({
     name: 'recover_token',
     nullable: true,

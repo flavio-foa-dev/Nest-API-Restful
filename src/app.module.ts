@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmConfig } from './config/typeorm.config';
@@ -7,7 +7,7 @@ import { UserModule } from './user/user.module';
 // import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { FilterExceptionHTTP } from './error/filter-exception';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
@@ -39,6 +39,10 @@ import { ConfigModule } from '@nestjs/config';
     {
       provide: APP_FILTER,
       useClass: FilterExceptionHTTP,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
     },
   ],
 })
