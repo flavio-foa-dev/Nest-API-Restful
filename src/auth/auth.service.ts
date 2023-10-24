@@ -13,10 +13,11 @@ export class AuthService {
   ) {}
   async login({ email, password }: CreateAuthDto) {
     const user = await this.userService.findByEmail(email);
-    if (!user) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException('Email or password not valid');
 
     const userComparer = bcrypt.compareSync(password, user.password);
-    if (!userComparer) throw new UnauthorizedException();
+    if (!userComparer)
+      throw new UnauthorizedException('Email or password not valid');
 
     const payload: UserPayload = {
       sub: user.id,

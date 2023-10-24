@@ -24,6 +24,10 @@ export class FilterExceptionHTTP implements ExceptionFilter {
     const response = context.getResponse();
     const request = context.getRequest();
 
+    if ('user' in request) {
+      this.loggerNest.log(`Rota acessada pelo User ${request.user.sub}`);
+    }
+
     const { status, body } =
       exception instanceof HttpException
         ? {

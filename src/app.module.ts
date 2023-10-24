@@ -18,6 +18,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerGlobalInterceptor } from './error/logger-global/logger-global.interceptor';
 
 @Module({
   imports: [
@@ -47,6 +48,10 @@ import { ConfigModule } from '@nestjs/config';
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggerGlobalInterceptor,
     },
     ConsoleLogger,
   ],
