@@ -53,7 +53,6 @@ export class OrderService {
       const product = productsRelations.find(
         (product) => product.id === item.productId,
       );
-
       if (product === undefined) {
         throw new NotFoundException(`product not found id:${item.productId}`);
       }
@@ -62,9 +61,7 @@ export class OrderService {
           `not enough product in stock:${item.productId}`,
         );
       }
-
       const itemOrderEntity = new OrderItemEntity();
-
       itemOrderEntity.product = product;
       itemOrderEntity.price = product.price;
       itemOrderEntity.quantity = item.quantity;
@@ -78,13 +75,17 @@ export class OrderService {
     }, 0);
 
     const orderEntity = new OrderEntity();
+    orderEntity.total = totalPrice;
     orderEntity.status = OrderStatus.PROCESSING;
     orderEntity.user = user;
     orderEntity.orderItem = itemsOrderEntity;
-    orderEntity.total = totalPrice;
 
-    const creteOrder = await this.orderRepository.save(orderEntity);
-    return creteOrder;
+    try {
+      const createOrder = await this.orderRepository.save(orderEntity);
+      return createOrder;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   async findAll() {
